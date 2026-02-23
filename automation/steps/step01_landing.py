@@ -118,3 +118,20 @@ def _type_like_human(element, text: str):
     element.focus()
     for char in text:
         element.type(char, delay=random.randint(140, 320))
+
+
+def run(session: BrowserSession):
+    page = session.page
+    print("\n🚀 STEP 01 — Website Landing & Initial Search Setup")
+    print("=" * 55)
+
+    # ── 1. Navigate to Airbnb ──────────────────────────────
+    print("\n[1] Opening Airbnb homepage...")
+    page.goto(URL, wait_until="domcontentloaded", timeout=60_000)
+    page.wait_for_timeout(2000)
+    _check(
+        session,
+        "Homepage load",
+        "Successfully navigated to airbnb.com. Homepage loaded with DOM content ready.",
+        "homepage_load",
+    )
