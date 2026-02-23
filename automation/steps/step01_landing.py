@@ -33,9 +33,39 @@ def _clean_suggestion(text: str) -> str:
         return f"{parts[0]} ({', '.join(parts[1:])})"
     return parts[0] if parts else ""
 
+def _dismiss_modal(session: BrowserSession):
+    page = session.page
+    dismissed = False
 
+    close_selectors = [
+        '[aria-label="Close"]',
+        '[aria-label="Translation on"]',
+        'button[data-testid="close-button"]',
+        '[data-testid="translation-announce-modal"] button',
+        'button:has-text("Got it")',
+        'button:has-text("Dismiss")',
+        'button:has-text("Close")',
+    ]
 
-    """Type directly into element with visible human-like delays."""
-    element.focus()
-    for char in text:
-        element.type(char, delay=random.randint(140, 320))
+    for selector in close_selectors:
+        try:
+            btn = page.locator(selector).first
+            if btn.is_visible(timeout=2000):
+                btn.click()
+                page.wait_for_timeout(800)
+                dismissed = True
+                break
+        except Exception:
+            continue
+
+    take_screenshot(page, "close_modal_pop_up_on_landing")
+    passed = session.passed()
+    comment = (
+        "Modal/pop-up detected and closed successfully after page landing."
+        if dismissed
+        else "No modal or pop-up appeared on page landing."
+    )
+    if not passed:
+        comment += f" | Errors: {session.error_summary()}"
+    log_result("Close modal / pop-up on landing", page.url, passed, comment)
+    session.clear_errors()
