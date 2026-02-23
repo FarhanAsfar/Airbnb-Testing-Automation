@@ -135,3 +135,24 @@ def run(session: BrowserSession):
         "Successfully navigated to airbnb.com. Homepage loaded with DOM content ready.",
         "homepage_load",
     )
+
+    # ── 2. Dismiss any modal ───────────────────────────────
+    print("\n[2] Checking for modals...")
+    _dismiss_modal(session)
+
+    # ── 3. Confirm homepage ────────────────────────────────
+    print("\n[3] Verifying homepage content...")
+    try:
+        page.wait_for_selector('header, [data-testid="main-navigation"]', timeout=10_000)
+        homepage_ok = True
+    except PWTimeout:
+        homepage_ok = False
+
+    _check(
+        session,
+        "Verify homepage content",
+        "Homepage verified: header and navigation elements are visible and rendered correctly."
+        if homepage_ok
+        else "Homepage verification failed: header/navigation element not found in DOM.",
+        "homepage_verify",
+    )
