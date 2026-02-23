@@ -111,3 +111,10 @@ def _find_and_activate_search(page: Page) -> tuple[bool, object]:
             continue
 
     return False, None
+
+
+def _type_like_human(element, text: str):
+    """Type directly into element with visible human-like delays."""
+    element.focus()
+    for char in text:
+        element.type(char, delay=random.randint(140, 320))
