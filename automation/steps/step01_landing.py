@@ -156,3 +156,26 @@ def run(session: BrowserSession):
         else "Homepage verification failed: header/navigation element not found in DOM.",
         "homepage_verify",
     )
+
+    # ── 4. Click search field ──────────────────────────────
+    print("\n[4] Clicking on the search field...")
+    clicked, search_input = _find_and_activate_search(page)
+    _check(
+        session,
+        "Click search field",
+        "Search bar clicked successfully. Input field is active and ready for input."
+        if clicked
+        else "Failed to locate and click the search input field.",
+        "search_field_click",
+    )
+
+    # ── 5. Select random city & type it ───────────────────
+    city = random.choice(CITIES)
+    print(f"\n[5] Typing city: '{city}'")
+
+    if search_input:
+        _type_like_human(search_input, city)
+    else:
+        for char in city:
+            page.keyboard.type(char)
+            time.sleep(random.uniform(0.15, 0.32))
