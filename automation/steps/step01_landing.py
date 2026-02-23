@@ -179,3 +179,51 @@ def run(session: BrowserSession):
         for char in city:
             page.keyboard.type(char)
             time.sleep(random.uniform(0.15, 0.32))
+
+    
+    # ── 6. Capture suggestion list ────────────────────────
+    print("\n[6] Capturing autocomplete suggestions...")
+    page.wait_for_timeout(2500)
+
+    suggestion_items = []
+    suggestion_selectors = [
+        '[data-testid="option"]',
+        '[role="option"]',
+        '[role="listbox"] li',
+        'ul[role="listbox"] li',
+        '[data-testid*="suggest"]',
+        '[class*="suggestion"]',
+        '[class*="autocomplete"] li',
+        'li[id*="suggestion"]',
+    ]
+
+    for sel in suggestion_selectors:
+        try:
+            items = page.locator(sel).all()
+            texts = [_clean_suggestion(item.inner_text()) for item in items if item.inner_text().strip()]
+            texts = [t for t in texts if t]
+            if texts:
+                suggestion_items = texts
+                print(f"  ✓ Matched selector: {sel}")
+                break
+        except Exception:
+            continue
+
+    if suggestion_items:
+        numbered = ", ".join(f"{i+1}. {item}" for i, item in enumerate(suggestion_items))
+        comment = f"Auto suggestion working. Typed '{city}', suggestion list: {numbered}"
+    else:
+        comment = f"Typed '{city}' into search field but no autocomplete suggestions were captured. Selector may need updating."
+
+    take_screenshot(page, "search_autocomplete")
+    passed = session.passed()
+    if not passed:
+        comment += f" | Errors: {session.error_summary()}"
+    log_result("Location search autocomplete", page.url, passed, comment)
+    session.clear_errors()
+
+    if suggestion_items:
+        print(f"  💡 {len(suggestion_items)} suggestions captured")
+
+    print("\n✅ Step 01 complete!")
+    return city
