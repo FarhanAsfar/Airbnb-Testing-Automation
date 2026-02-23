@@ -69,3 +69,45 @@ def _dismiss_modal(session: BrowserSession):
         comment += f" | Errors: {session.error_summary()}"
     log_result("Close modal / pop-up on landing", page.url, passed, comment)
     session.clear_errors()
+
+
+def _find_and_activate_search(page: Page) -> tuple[bool, object]:
+    """Click the search bar to open the panel, then return the active input element."""
+    opener_selectors = [
+        '[data-testid="structured-search-input-field-query"]',
+        '[data-testid="little-search"]',
+        '[data-testid="little-search-query"]',
+        'button[aria-label*="Search"]',
+        '[placeholder*="Search destinations"]',
+        '[placeholder*="Where are you going"]',
+    ]
+    for sel in opener_selectors:
+        try:
+            el = page.locator(sel).first
+            if el.is_visible(timeout=2000):
+                el.click()
+                page.wait_for_timeout(1000)
+                break
+        except Exception:
+            continue
+
+    input_selectors = [
+        '[data-testid="structured-search-input-field-query"]',
+        'input[placeholder*="Search destinations"]',
+        'input[placeholder*="Where are you going"]',
+        'input[name="query"]',
+        '[aria-label="Search destinations"]',
+        'input[type="text"][data-testid]',
+        'input[type="search"]',
+    ]
+    for sel in input_selectors:
+        try:
+            el = page.locator(sel).first
+            if el.is_visible(timeout=2000):
+                el.click()
+                page.wait_for_timeout(500)
+                return True, el
+        except Exception:
+            continue
+
+    return False, None
