@@ -8,9 +8,19 @@ IGNORED_URL_PATTERNS = (
     'airdog', 'ad.doubleclick', 'analytics', 'snap.licdn',
 )
 
+# Patterns to ignore in console error messages (not URLs)
+IGNORED_CONSOLE_PATTERNS = (
+    'AbortError', 'signal is aborted', 'ResizeObserver',
+    'Non-Error promise rejection', 'Load failed',
+)
+
 
 def _is_ignored_url(url: str) -> bool:
     return any(pattern in url for pattern in IGNORED_URL_PATTERNS)
+
+
+def _is_ignored_console(msg: str) -> bool:
+    return any(pattern in msg for pattern in IGNORED_CONSOLE_PATTERNS)
 
 
 class BrowserSession:
@@ -48,7 +58,7 @@ class BrowserSession:
         self.page.on('response', self._on_response)
 
     def _on_console(self, msg):
-        if msg.type == 'error' and not _is_ignored_url(msg.text):
+        if msg.type == 'error' and not _is_ignored_url(msg.text) and not _is_ignored_console(msg.text):
             self.console_errors.append(msg.text)
 
     def _on_response(self, response):
