@@ -3,7 +3,7 @@ os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
 from django.core.management.base import BaseCommand
 from automation.utils.browser import BrowserSession
-from automation.steps import step01_landing, step03_datepicker, step04_guests
+from automation.steps import step01_landing, step03_datepicker, step04_guests, step05_results
 
 
 class Command(BaseCommand):
@@ -23,8 +23,8 @@ class Command(BaseCommand):
         with BrowserSession(headless=headless) as session:
             try:
                 city, chosen_text, suggestion_items = None, None, []
-                selected_suggestion = None
                 date_info = None
+                guest_info = None
 
                 if step == 0 or step == 1:
                     city, chosen_text, suggestion_items = step01_landing.run(session)
@@ -33,25 +33,35 @@ class Command(BaseCommand):
                     ))
 
                 if step == 0 or step == 3:
-                    suggestion = chosen_text
-                    if not suggestion:
-                        self.stdout.write(self.style.ERROR("Step 3 requires a selected suggestion."))
+                    if not chosen_text:
+                        self.stdout.write(self.style.ERROR("Step 3 requires step 1."))
                     else:
-                        date_info = step03_datepicker.run(session, suggestion)
-                        if date_info and isinstance(date_info, dict):
+                        date_info = step03_datepicker.run(session, chosen_text)
+                        if date_info:
                             self.stdout.write(self.style.SUCCESS(
-                                f"\n   Dates: {date_info['checkin']} → {date_info['checkout']}"
+                                f"\n   Dates: {date_info['checkin']} -> {date_info['checkout']}"
                             ))
-                
-                if step == 0 or step == 4:
-                    suggestion = chosen_text 
-                    if not suggestion:
-                        self.stdout.write(self.style.ERROR("Step 4 requires a selected suggestion."))
-                    else:
-                        guest_info = step04_guests.run(session, suggestion, date_info)
-                        if guest_info and isinstance(guest_info, dict):
-                            self.stdout.write(self.style.SUCCESS(f"\n   Guests: {guest_info['guests']}"))
 
+                if step == 0 or step == 4:
+                    if not chosen_text:
+                        self.stdout.write(self.style.ERROR("Step 4 requires step 1."))
+                    else:
+                        guest_info = step04_guests.run(session, chosen_text, date_info)
+                        if guest_info:
+                            self.stdout.write(self.style.SUCCESS(
+                                f"\n   Guests: {guest_info['guests']}"
+                            ))
+
+                if step == 0 or step == 5:
+                    if not chosen_text:
+                        self.stdout.write(self.style.ERROR("Step 5 requires step 1."))
+                    else:
+                        results_info = step05_results.run(session, chosen_text, date_info, guest_info)
+                        if results_info:
+                            self.stdout.write(self.style.SUCCESS(
+                                f"\n   Listings found: {results_info['listings_found']}"
+                                f" | Saved: {results_info['listings_saved']}"
+                            ))
 
             except Exception as e:
                 self.stdout.write(self.style.ERROR(f"\n❌ Automation crashed: {e}"))
