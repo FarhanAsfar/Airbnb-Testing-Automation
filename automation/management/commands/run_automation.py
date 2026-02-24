@@ -41,7 +41,7 @@ class Command(BaseCommand):
                 #         )
 
                 if step == 0 or step == 3:
-                    suggestion = chosen_text or selected_suggestion
+                    suggestion = chosen_text
                     if not suggestion:
                         self.stdout.write(self.style.ERROR("Step 3 requires a selected suggestion."))
                     else:
@@ -50,6 +50,16 @@ class Command(BaseCommand):
                             self.stdout.write(self.style.SUCCESS(
                                 f"\n   Dates: {date_info['checkin']} → {date_info['checkout']}"
                             ))
+                
+                # if step == 0 or step == 4:
+                #     suggestion = chosen_text 
+                #     if not suggestion:
+                #         self.stdout.write(self.style.ERROR("Step 4 requires a selected suggestion."))
+                #     else:
+                #         guest_info = step04_guests.run(session, suggestion, date_info)
+                #         if guest_info and isinstance(guest_info, dict):
+                #             self.stdout.write(self.style.SUCCESS(f"\n   Guests: {guest_info['guests']}"))
+
 
             except Exception as e:
                 self.stdout.write(self.style.ERROR(f"\n❌ Automation crashed: {e}"))
