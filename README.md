@@ -53,9 +53,28 @@ uv venv
 uv pip install -r requirements.txt
 ```
 
+### Migrate Database
+```
+uv run manage.py migrate
+```
+
 ### Running the Automation
 ```bash
-python manage.py run_automation
+uv run manage.py run_automation
+```
+
+### To Check the Database in Admin Panel
+**Create a Super User**
+```bash
+uv run manage.py createsuperuser
+```
+**Run the Server**
+```
+uv run manage.py runserver
+```
+**Visit**
+```
+http://127.0.0.1:8000/admin/
 ```
 
 ---
