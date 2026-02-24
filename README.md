@@ -1,6 +1,6 @@
-# 🧪 Airbnb Search Automation Framework
+# 🧪 Airbnb Search Automation 
 
-An end-to-end browser automation framework that validates the Airbnb search flow step-by-step using Playwright.
+An end-to-end browser automation script that validates the Airbnb search flow step-by-step using Playwright.
 
 This project simulates a real user journey:
 
@@ -11,29 +11,15 @@ This project simulates a real user journey:
 5. Submit search  
 6. Validate results  
 
-The framework is built for reliability, structured logging, and deterministic UI validation.
-
 ---
 
-# 📌 Project Goals
-
-- Automate the Airbnb search journey
-- Validate UI behavior at every step
-- Capture screenshots for traceability
-- Log pass/fail results clearly
-- Enforce step dependencies
-- Make debugging failures fast and obvious
-
-This is not just automation — it is structured validation.
-
----
 
 # 🏗️ Project Structure
 automation/
 │
 ├── steps/
-│ ├── step01_landing.py # Location input + autocomplete
-│ ├── step02_suggestions.py # Suggestion selection
+│ ├── step01_landing.py # (step1 + step2) Location input + autocomplete
+│ ├──
 │ ├── step03_dates.py # Date picker handling
 │ ├── step04_guests.py # Guest selection
 │ └── step05_results.py # Search results validation
@@ -48,25 +34,29 @@ automation/
 
 ---
 
-# 🚀 Installation
+# Project Installation
 
-## 1️⃣ Clone Repository
+### Clone Repository
 
 ```bash
 git clone <your-repository-url>
 cd <project-folder>
+```
 
-Install Dependencies
-pip install -r requirements.txt
+### Activate UV Environment
+```
+uv venv
+```
 
-Install Playwright Browsers
-playwright install
+### Install Dependencies
+```
+uv pip install -r requirements.txt
+```
 
-
-Running the Automation
-Run Full Flow
+### Running the Automation
+```bash
 python manage.py run_automation
-
+```
 
 ---
 
