@@ -213,7 +213,7 @@ def run(session, chosen_text):
                 break
         if checkin_pos is None:
             checkin_pos = checkin_index
-        next_pos = checkin_pos + 1
+        next_pos = checkin_pos + random.randint(2,8)
         if next_pos < len(days):
             checkout_el = days[next_pos]
             checkout_date = _parse_date(checkout_el)
