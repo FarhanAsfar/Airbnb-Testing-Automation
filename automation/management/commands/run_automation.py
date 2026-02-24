@@ -3,7 +3,7 @@ os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
 from django.core.management.base import BaseCommand
 from automation.utils.browser import BrowserSession
-from automation.steps import step01_landing, step03_datepicker
+from automation.steps import step01_landing, step03_datepicker, step04_guests
 
 
 class Command(BaseCommand):
@@ -32,14 +32,6 @@ class Command(BaseCommand):
                         f"\n   City: {city} | Selected: {chosen_text}"
                     ))
 
-                # if step == 0 or step == 2:
-                #     if not city:
-                #         self.stdout.write(self.style.ERROR("Step 2 requires Step 1."))
-                #     else:
-                #         selected_suggestion = step02_suggestions.run(
-                #             session, city, suggestion_items, chosen_text
-                #         )
-
                 if step == 0 or step == 3:
                     suggestion = chosen_text
                     if not suggestion:
@@ -51,14 +43,14 @@ class Command(BaseCommand):
                                 f"\n   Dates: {date_info['checkin']} → {date_info['checkout']}"
                             ))
                 
-                # if step == 0 or step == 4:
-                #     suggestion = chosen_text 
-                #     if not suggestion:
-                #         self.stdout.write(self.style.ERROR("Step 4 requires a selected suggestion."))
-                #     else:
-                #         guest_info = step04_guests.run(session, suggestion, date_info)
-                #         if guest_info and isinstance(guest_info, dict):
-                #             self.stdout.write(self.style.SUCCESS(f"\n   Guests: {guest_info['guests']}"))
+                if step == 0 or step == 4:
+                    suggestion = chosen_text 
+                    if not suggestion:
+                        self.stdout.write(self.style.ERROR("Step 4 requires a selected suggestion."))
+                    else:
+                        guest_info = step04_guests.run(session, suggestion, date_info)
+                        if guest_info and isinstance(guest_info, dict):
+                            self.stdout.write(self.style.SUCCESS(f"\n   Guests: {guest_info['guests']}"))
 
 
             except Exception as e:

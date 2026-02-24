@@ -45,6 +45,24 @@ def run(session, chosen_text, date_info):
     print("\n👥 STEP 04 — Guest Selection")
     print("=" * 55)
 
+    # 0. Close calendar if still open (press Escape or click outside)
+    print("\n[0] Ensuring calendar is closed...")
+    try:
+        page.keyboard.press("Escape")
+        page.wait_for_timeout(800)
+    except Exception:
+        pass
+
+    # Debug: show current page state
+    try:
+        testids = [el.get_attribute("data-testid")
+                   for el in page.locator("[data-testid]").all()
+                   if el.is_visible()]
+        testids = [t for t in testids if t]
+        print(f"  Visible testids: {testids[:12]}")
+    except Exception:
+        pass
+
     # 1. Click the guests field
     print("\n[1] Clicking guest input field...")
     guest_field_opened = False
